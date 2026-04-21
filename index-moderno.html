@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IzasPrint</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%236366f1'/%3E%3Cstop offset='100%25' stop-color='%23ec4899'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='25' fill='url(%23g)'/%3E%3Cpath d='M15 85 L50 35 L85 85 Z' fill='%23ffffff'/%3E%3Cpath d='M50 85 L70 50 L95 85 Z' fill='%23ffffff' opacity='0.6'/%3E%3Ccircle cx='75' cy='30' r='8' fill='%23ffffff' opacity='0.9'/%3E%3C/svg%3E">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0e1a;
+            --bg-card: rgba(20, 25, 45, 0.6);
+            --border-glow: rgba(99, 102, 241, 0.3);
+            --accent-primary: #6366f1;
+            --accent-secondary: #ec4899;
+            --text-primary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f3a 50%, #0f172a 100%);
+            color: var(--text-primary);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            width: 400px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .control-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .control-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .control-panel::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 10px;
+        }
+
+        .brand-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-glow);
+        }
+
+        .brand-logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 8px;
+            margin-top: 12px;
+        }
+
+        select,
+        input,
+        textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        select:focus,
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        select option {
+            background: #1a1f3a;
+            color: white;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-group>* {
+            flex: 1;
+        }
+
+        /* Template Grid - Reduced to 3 */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .template-card {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid var(--glass-border);
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
+        .template-card.active {
+            border-color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .template-icon {
+            font-size: 1.5rem;
+        }
+
+        .template-name {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed var(--glass-border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .file-upload:hover {
+            border-color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .file-upload.has-image {
+            border-style: solid;
+            border-color: var(--accent-secondary);
+        }
+
+        /* Button */
+        .btn-download {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: auto;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Preview Area */
+        .preview-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow: auto;
+            position: relative;
+        }
+
+        .zoom-controls {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        input[type="range"] {
+            width: 100px;
+        }
+
+        .zoom-value {
+            font-weight: 700;
+            color: var(--accent-primary);
+            min-width: 45px;
+            text-align: right;
+        }
+
+        /* ==================================================
+           POSTER BASE STYLES
+           ================================================== */
+        #cartel {
+            background: #ffffff;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transform-origin: center;
+            transition: transform 0.3s ease;
+            overflow: hidden;
+            /* Default fallback background if no image */
+            background-color: #f1f5f9;
+        }
+
+        #cartel.is-portrait {
+            width: 794px;
+            height: 1123px;
+        }
+
+        #cartel.is-landscape {
+            width: 1123px;
+            height: 794px;
+        }
+
+        .cartel-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+
+        /* ==================================================
+           TEMPLATE 1: HERO (Elegante y fotográfico)
+           ================================================== */
+        .template-hero .cartel-bg {
+            /* Degradado oscuro sobre la imagen para asegurar lectura del texto blanco */
+            box-shadow: inset 0 -600px 400px -200px rgba(0, 0, 0, 0.85);
+        }
+
+        .template-hero .content {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 60px;
+            color: white;
+        }
+
+        .template-hero .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .template-hero .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .template-hero .badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .template-hero .product-info {
+            max-width: 80%;
+        }
+
+        .template-hero .title {
+            font-family: 'Syne', sans-serif;
+            font-size: 5.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 20px;
+            text-wrap: balance;
+        }
+
+        .template-hero .desc {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.5rem;
+            line-height: 1.4;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .template-hero .price-block {
+            display: flex;
+            align-items: baseline;
+            gap: 20px;
+        }
+
+        .template-hero .price {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 8rem;
+            line-height: 0.8;
+            color: #fff;
+        }
+
+        .template-hero .old-price {
+            font-family: 'Inter', sans-serif;
+            font-size: 2.5rem;
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        /* ==================================================
+           TEMPLATE 2: SPLIT (Corporativo y estructurado)
+           ================================================== */
+        .template-split {
+            display: flex;
+            flex-direction: row;
+            /* Landscape by default */
+        }
+
+        .template-split.is-portrait {
+            flex-direction: column;
+        }
+
+        .template-split .image-pane {
+            flex: 1;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            background-color: #cbd5e1;
+            z-index: 1;
+        }
+
+        .template-split .text-pane {
+            flex: 1;
+            background: #ffffff;
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .template-split .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: auto;
+        }
+
+        .template-split .collection {
+            color: #6366f1;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .template-split .title {
+            font-family: 'Syne', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.1;
+            margin-bottom: 25px;
+        }
+
+        .template-split .desc {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.3rem;
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .template-split .price-area {
+            margin-top: auto;
+            border-top: 2px solid #e2e8f0;
+            padding-top: 30px;
+        }
+
+        .template-split .price-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .template-split .price {
+            font-family: 'Syne', sans-serif;
+            font-size: 5rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1;
+        }
+
+        /* ==================================================
+   TEMPLATE 3: PROMO (Impacto e incentivo - ESTILO GLASS)
+   ================================================== */
+        .template-promo .cartel-bg {
+            /* Capa semitransparente oscura para destacar la caja central */
+            background-color: rgba(15, 23, 42, 0.7);
+            background-blend-mode: multiply;
+        }
+
+        .template-promo .content {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        /* --- LA MAGIA DEL GLASSMORPHISM AQUÍ --- */
+        .template-promo .promo-card {
+            padding: 60px;
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+
+            /* Efecto Glass adaptado */
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            /* Subido a 15px para mejor legibilidad en el cartel */
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow:
+                0 30px 60px rgba(0, 0, 0, 0.4),
+                /* Tu sombra original para dar profundidad */
+                inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Brillos de los bordes superior e izquierdo */
+        .template-promo .promo-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+        }
+
+        .template-promo .promo-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), transparent, rgba(255, 255, 255, 0.3));
+        }
+
+        /* --- AJUSTE DE COLORES DE TEXTO PARA QUE DESTAQUEN SOBRE EL CRISTAL --- */
+        .template-promo .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffffff;
+            /* Cambiado a blanco */
+            margin-bottom: 20px;
+        }
+
+        .template-promo .title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 5rem;
+            color: #ffffff;
+            /* Cambiado a blanco */
+            line-height: 1;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            /* Pequeña sombra para extra legibilidad */
+        }
+
+        .template-promo .desc {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.2rem;
+            color: #e2e8f0;
+            /* Gris muy clarito */
+            margin-bottom: 30px;
+        }
+
+        .template-promo .prices {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .template-promo .old-price {
+            font-family: 'Inter', sans-serif;
+            font-size: 2.5rem;
+            color: #cbd5e1;
+            /* Gris medio-claro */
+            text-decoration: line-through;
+            font-weight: 600;
+        }
+
+        .template-promo .price {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 9rem;
+            color: #ff4757;
+            /* Rojo un poco más brillante para que vibre sobre el fondo oscuro */
+            line-height: 0.8;
+            text-shadow: 0 4px 20px rgba(255, 71, 87, 0.3);
+            /* Resplandor rojo sutil */
+        }
+
+        .template-promo .badge {
+            display: inline-block;
+            background: #ff4757;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            padding: 10px 30px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Estilos para selectores de color */
+        input[type="color"] {
+            padding: 2px;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="control-panel">
+        <div class="brand-header">
+            <div class="brand-logo">IZASPRINT</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">📐 Plantilla</div>
+            <div class="template-grid">
+                <div class="template-card active" onclick="selectTemplate('hero')">
+                    <div class="template-icon">🌌</div>
+                    <div class="template-name">Hero</div>
+                </div>
+                <div class="template-card" onclick="selectTemplate('split')">
+                    <div class="template-icon">📑</div>
+                    <div class="template-name">Split</div>
+                </div>
+                <div class="template-card" onclick="selectTemplate('promo')">
+                    <div class="template-icon">🔥</div>
+                    <div class="template-name">Promo</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">📏 Formato</div>
+            <div class="input-group">
+                <div>
+                    <label>Tamaño</label>
+                    <select id="sel-size" onchange="render()">
+                        <option value="a4">A4</option>
+                        <option value="a5">A5</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Orientación</label>
+                    <select id="sel-orientation" onchange="render()">
+                        <option value="p">Vertical</option>
+                        <option value="l">Horizontal</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🖼️ Imagen de Fondo</div>
+            <div class="file-upload" id="file-upload-area" onclick="document.getElementById('file-input').click()">
+                <input type="file" id="file-input" accept="image/*" onchange="loadImage()" style="display: none;">
+                <div id="upload-text">📁 Clic para cargar imagen</div>
+            </div>
+
+            <div id="image-controls" style="display: none; margin-top: 15px;">
+                <label>Escala de imagen</label>
+                <input type="range" id="img-scale" min="1" max="4" step="0.1" value="1"
+                    oninput="updateImageTransform()">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🎨 Colores</div>
+
+            <div class="input-group">
+                <div>
+                    <label>Marca (Logo)</label>
+                    <input type="color" id="col-brand" value="#ffffff" oninput="render()">
+                </div>
+                <div>
+                    <label>Título</label>
+                    <input type="color" id="col-title" value="#ffffff" oninput="render()">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div>
+                    <label>Descripción</label>
+                    <input type="color" id="col-desc" value="#e2e8f0" oninput="render()">
+                </div>
+                <div>
+                    <label>Etiqueta / Col.</label>
+                    <input type="color" id="col-badge" value="#ff4757" oninput="render()">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div>
+                    <label>Precio Actual</label>
+                    <input type="color" id="col-price" value="#ff4757" oninput="render()">
+                </div>
+                <div>
+                    <label>Precio Ant.</label>
+                    <input type="color" id="col-old" value="#cbd5e1" oninput="render()">
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">✏️ Contenido</div>
+            <div>
+                <label>Producto</label>
+                <input type="text" id="inp-title" placeholder="Nombre del producto" oninput="render()">
+
+                <label>Descripción</label>
+                <textarea id="inp-desc" rows="3" placeholder="Características..." oninput="render()"></textarea>
+
+                <div class="input-group">
+                    <div>
+                        <label>Precio Actual</label>
+                        <input type="text" id="inp-price" placeholder="49.99" oninput="render()">
+                    </div>
+                    <div>
+                        <label>Precio Anterior</label>
+                        <input type="text" id="inp-old" placeholder="89.99" oninput="render()">
+                    </div>
+                </div>
+
+                <label>Colección / Etiqueta</label>
+                <input type="text" id="inp-collection" placeholder="AW 2024" oninput="render()">
+            </div>
+        </div>
+
+        <button class="btn-download" onclick="downloadPDF()">
+            <span id="btn-text">⬇ Descargar PDF</span>
+        </button>
+    </div>
+
+    <div class="preview-area">
+        <div class="zoom-controls">
+            <label>🔍</label>
+            <input type="range" id="zoom-slider" min="0.3" max="1" step="0.05" value="0.7"
+                oninput="updateZoom(this.value)">
+            <div class="zoom-value" id="zoom-value">70%</div>
+        </div>
+
+        <div id="cartel" class="template-hero is-portrait"></div>
+    </div>
+
+    <script>
+        // Estado centralizado
+        let state = {
+            template: 'hero',
+            size: 'a4',
+            orientation: 'p',
+            zoom: 0.7,
+            image: null,
+            imgScale: 1,
+            imgX: 0,
+            imgY: 0,
+            data: {
+                title: 'CHAQUETA MONT BLANC',
+                desc: 'Tejido técnico transpirable con membrana impermeable. Ajuste ergonómico diseñado para la alta montaña.',
+                price: '79.99',
+                oldPrice: '129.99',
+                collection: 'WINTER COLLECTION'
+            }
+        };
+
+        // 1. Añadimos las paletas por defecto según la plantilla
+        const templateColors = {
+            hero: { brand: '#ffffff', title: '#ffffff', desc: '#e2e8f0', price: '#ffffff', old: '#cbd5e1', badge: '#ffffff' },
+            split: { brand: '#0f172a', title: '#0f172a', desc: '#475569', price: '#0f172a', old: '#94a3b8', badge: '#6366f1' },
+            promo: { brand: '#ffffff', title: '#ffffff', desc: '#e2e8f0', price: '#ff4757', old: '#cbd5e1', badge: '#ff4757' }
+        };
+
+        // 2. Actualizamos selectTemplate para que cambie los colores al clicar
+        function selectTemplate(template) {
+            state.template = template;
+            document.querySelectorAll('.template-card').forEach(card => card.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            // Autocompletar colores ideales de la plantilla
+            const colors = templateColors[template];
+            document.getElementById('col-brand').value = colors.brand; // <--- NUEVA LÍNEA
+            document.getElementById('col-title').value = colors.title;
+            document.getElementById('col-desc').value = colors.desc;
+            document.getElementById('col-price').value = colors.price;
+            document.getElementById('col-old').value = colors.old;
+            document.getElementById('col-badge').value = colors.badge;
+
+            render();
+        }
+
+        // 3. Limpiamos la función de transformación de imagen (solo escala)
+        function updateImageTransform() {
+            state.imgScale = document.getElementById('img-scale').value;
+            const bgElement = document.querySelector('.cartel-bg') || document.querySelector('.image-pane');
+            if (bgElement) {
+                bgElement.style.transform = `scale(${state.imgScale})`;
+            }
+        }
+
+        // 4. Capturamos los colores en getData()
+        function getData() {
+            return {
+                title: document.getElementById('inp-title').value || state.data.title,
+                desc: document.getElementById('inp-desc').value || state.data.desc,
+                price: document.getElementById('inp-price').value || state.data.price,
+                oldPrice: document.getElementById('inp-old').value || state.data.oldPrice,
+                collection: document.getElementById('inp-collection').value || state.data.collection,
+
+                // Extraemos colores
+                colBrand: document.getElementById('col-brand').value, // <--- NUEVA LÍNEA
+                colTitle: document.getElementById('col-title').value,
+                colDesc: document.getElementById('col-desc').value,
+                colPrice: document.getElementById('col-price').value,
+                colOld: document.getElementById('col-old').value,
+                colBadge: document.getElementById('col-badge').value
+            };
+        }
+
+        // 5. Aplicamos los colores en línea a las plantillas
+        function renderHero(data, bgStyle) {
+            return `
+        <div class="cartel-bg" style="${bgStyle}"></div>
+        <div class="content">
+            <div class="header">
+                <div class="logo" style="color: ${data.colBrand}">IZAS</div>
+                <div class="badge" style="color: ${data.colBadge}; border-color: ${data.colBadge}">${data.collection}</div>
+            </div>
+            <div class="product-info">
+                <div class="title" style="color: ${data.colTitle}">${data.title}</div>
+                <div class="desc" style="color: ${data.colDesc}">${data.desc}</div>
+                <div class="price-block">
+                    <div class="price" style="color: ${data.colPrice}">${data.price}€</div>
+                    ${data.oldPrice ? `<div class="old-price" style="color: ${data.colOld}">${data.oldPrice}€</div>` : ''}
+                </div>
+            </div>
+        </div>
+    `;
+        }
+
+        function renderSplit(data, bgStyle) {
+            return `
+        <div class="image-pane" style="${bgStyle}"></div>
+        <div class="text-pane">
+            <div class="logo" style="color: ${data.colBrand}">IZAS</div>
+            <div class="collection" style="color: ${data.colBadge}">${data.collection}</div>
+            <div class="title" style="color: ${data.colTitle}">${data.title}</div>
+            <div class="desc" style="color: ${data.colDesc}">${data.desc}</div>
+            <div class="price-area">
+                <div class="price-label">Precio Especial</div>
+                <div class="price" style="color: ${data.colPrice}">${data.price}€</div>
+            </div>
+        </div>
+    `;
+        }
+
+        function renderPromo(data, bgStyle) {
+            const savings = data.oldPrice ? (parseFloat(data.oldPrice) - parseFloat(data.price)).toFixed(2) : null;
+            return `
+        <div class="cartel-bg" style="${bgStyle}"></div>
+        <div class="content">
+            <div class="promo-card">
+                <div class="logo" style="color: ${data.colBrand}">IZAS</div>
+                <div class="title" style="color: ${data.colTitle}">${data.title}</div>
+                <div class="desc" style="color: ${data.colDesc}">${data.desc}</div>
+                <div class="prices">
+                    ${data.oldPrice ? `<div class="old-price" style="color: ${data.colOld}">${data.oldPrice}€</div>` : ''}
+                    <div class="price" style="color: ${data.colPrice}">${data.price}€</div>
+                </div>
+                ${savings
+                    ? `<div class="badge" style="background: ${data.colBadge}">Ahorras ${savings}€</div>`
+                    : `<div class="badge" style="background: ${data.colBadge}">${data.collection}</div>`}
+            </div>
+        </div>
+    `;
+        }
+
+        function loadImage() {
+            const input = document.getElementById('file-input');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    state.image = e.target.result;
+                    document.getElementById('file-upload-area').classList.add('has-image');
+                    document.getElementById('upload-text').textContent = '✓ Imagen aplicada';
+
+                    // Mostrar los controles de ajuste
+                    document.getElementById('image-controls').style.display = 'block';
+
+                    // Reiniciar valores al subir nueva imagen
+                    document.getElementById('img-scale').value = 1;
+                    state.imgScale = 1;
+
+                    render();
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function updateZoom(value) {
+            state.zoom = parseFloat(value);
+            document.getElementById('zoom-value').textContent = Math.round(value * 100) + '%';
+            applyZoom();
+        }
+
+        function applyZoom() {
+            document.getElementById('cartel').style.transform = `scale(${state.zoom})`;
+        }
+
+
+        // --- Motores de Renderizado ---
+        function render() {
+            state.size = document.getElementById('sel-size').value;
+            state.orientation = document.getElementById('sel-orientation').value;
+
+            const poster = document.getElementById('cartel');
+            const data = getData();
+            const bgStyle = state.image ? `background-image: url('${state.image}');` : '';
+
+            poster.className = `template-${state.template} is-${state.orientation === 'l' ? 'landscape' : 'portrait'}`;
+            applyZoom();
+
+            if (state.template === 'hero') poster.innerHTML = renderHero(data, bgStyle);
+            if (state.template === 'split') poster.innerHTML = renderSplit(data, bgStyle);
+            if (state.template === 'promo') poster.innerHTML = renderPromo(data, bgStyle);
+            if (state.image) {
+                updateImageTransform();
+            }
+        }
+
+        function downloadPDF() {
+            const btnText = document.getElementById('btn-text');
+            const originalText = btnText.textContent;
+            btnText.textContent = '⏳ Cargando fuentes...';
+
+            // Asegurarnos de que las fuentes están 100% cargadas antes de capturar
+            document.fonts.ready.then(() => {
+                btnText.textContent = '⏳ Generando PDF...';
+                const poster = document.getElementById('cartel');
+
+                const isPortrait = state.orientation === 'p';
+                const realWidth = isPortrait ? 794 : 1123;
+                const realHeight = isPortrait ? 1123 : 794;
+
+                htmlToImage.toPng(poster, {
+                    quality: 0.95,
+                    pixelRatio: 3,
+                    width: realWidth,
+                    height: realHeight,
+                    style: {
+                        transform: 'scale(1)',
+                        transformOrigin: 'top left',
+                        margin: 0
+                    }
+                })
+                    .then(function (dataUrl) {
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF(state.orientation, 'mm', state.size);
+
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const pdfHeight = pdf.internal.pageSize.getHeight();
+
+                        pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                        pdf.save(`IzasPrint_${state.template}.pdf`);
+
+                        btnText.textContent = originalText;
+                    })
+                    .catch(function (error) {
+                        console.error('Error generando el PDF:', error);
+                        btnText.textContent = '❌ Error al exportar';
+                        setTimeout(() => btnText.textContent = originalText, 3000);
+                    });
+            });
+        }
+
+        // Inicialización
+        render();
+    </script>
+</body>
+
+</html>
