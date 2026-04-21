@@ -249,31 +249,91 @@
             position: relative;
         }
 
+        /* ==================================================
+   CONTROLES DE ZOOM (Lupa)
+   ================================================== */
         .zoom-controls {
             position: fixed;
             top: 30px;
             right: 30px;
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 50px;
-            padding: 12px 24px;
+            padding: 10px 20px;
             display: flex;
             align-items: center;
             gap: 15px;
             z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .zoom-controls label {
+            margin: 0;
+            /* Quitamos el margen que le aplicaba a los labels del menú */
+            font-size: 1.1rem;
+        }
+
+        /* Reiniciamos el input range por defecto */
+        .zoom-controls input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 120px;
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+
+        .zoom-controls input[type="range"]:focus {
+            outline: none;
+            border: none;
+            background: transparent;
+        }
+
+        /* La pista (la línea de fondo) */
+        .zoom-controls input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        /* El tirador (el botoncito que arrastras) */
+        .zoom-controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            cursor: pointer;
+            margin-top: -5px;
+            /* Centra el tirador verticalmente en la pista */
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+            /* Brillo a juego con tu color primario */
+            transition: transform 0.2s ease;
+        }
+
+        .zoom-controls input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            /* Crece un poquito al pasar el ratón */
+        }
+
+        /* Estilo para el número del porcentaje */
+        .zoom-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            min-width: 45px;
+            text-align: right;
         }
 
         input[type="range"] {
             width: 100px;
         }
 
-        .zoom-value {
-            font-weight: 700;
-            color: var(--accent-primary);
-            min-width: 45px;
-            text-align: right;
-        }
 
         /* ==================================================
            POSTER BASE STYLES
