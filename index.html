@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IzasPrint</title>
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%236366f1'/%3E%3Cstop offset='100%25' stop-color='%23ec4899'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='25' fill='url(%23g)'/%3E%3Cpath d='M15 85 L50 35 L85 85 Z' fill='%23ffffff'/%3E%3Cpath d='M50 85 L70 50 L95 85 Z' fill='%23ffffff' opacity='0.6'/%3E%3Ccircle cx='75' cy='30' r='8' fill='%23ffffff' opacity='0.9'/%3E%3C/svg%3E">
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%236366f1'/%3E%3Cstop offset='100%25' stop-color='%23ec4899'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='25' fill='url(%23g)'/%3E%3Cpath d='M15 85 L50 35 L85 85 Z' fill='%23ffffff'/%3E%3Cpath d='M50 85 L70 50 L95 85 Z' fill='%23ffffff' opacity='0.6'/%3E%3Ccircle cx='75' cy='30' r='8' fill='%23ffffff' opacity='0.9'/%3E%3C/svg%3E">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
+        /* Fuentes tipográficas */
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap');
 
         * {
@@ -41,7 +42,9 @@
             overflow: hidden;
         }
 
-        /* Control Panel */
+        /* ==================================================
+           CONTROL PANEL
+           ================================================== */
         .control-panel {
             width: 400px;
             background: var(--glass-bg);
@@ -55,14 +58,8 @@
             z-index: 10;
         }
 
-        .control-panel::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .control-panel::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
+        .control-panel::-webkit-scrollbar { width: 6px; }
+        .control-panel::-webkit-scrollbar-track { background: transparent; }
         .control-panel::-webkit-scrollbar-thumb {
             background: var(--accent-primary);
             border-radius: 10px;
@@ -122,9 +119,7 @@
             margin-top: 12px;
         }
 
-        select,
-        input,
-        textarea {
+        select, input[type="text"], textarea {
             width: 100%;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
@@ -136,9 +131,7 @@
             transition: all 0.3s ease;
         }
 
-        select:focus,
-        input:focus,
-        textarea:focus {
+        select:focus, input:focus, textarea:focus {
             outline: none;
             border-color: var(--accent-primary);
             background: rgba(255, 255, 255, 0.08);
@@ -158,7 +151,7 @@
             flex: 1;
         }
 
-        /* Template Grid - Reduced to 3 */
+        /* Template Grid */
         .template-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -179,19 +172,13 @@
             transition: all 0.3s ease;
         }
 
-        .template-card:hover {
-            border-color: rgba(99, 102, 241, 0.5);
-        }
-
+        .template-card:hover { border-color: rgba(99, 102, 241, 0.5); }
         .template-card.active {
             border-color: var(--accent-primary);
             background: rgba(99, 102, 241, 0.1);
         }
 
-        .template-icon {
-            font-size: 1.5rem;
-        }
-
+        .template-icon { font-size: 1.5rem; }
         .template-name {
             font-size: 0.65rem;
             font-weight: 600;
@@ -240,7 +227,26 @@
             box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
         }
 
-        /* Preview Area */
+        /* Estilos para selectores de color */
+        input[type="color"] {
+            padding: 2px;
+            height: 40px;
+            cursor: pointer;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch {
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+        }
+
+        /* ==================================================
+           PREVIEW AREA & ZOOM CONTROLS
+           ================================================== */
         .preview-area {
             flex: 1;
             display: flex;
@@ -249,9 +255,6 @@
             position: relative;
         }
 
-        /* ==================================================
-   CONTROLES DE ZOOM (Lupa)
-   ================================================== */
         .zoom-controls {
             position: fixed;
             top: 30px;
@@ -271,11 +274,9 @@
 
         .zoom-controls label {
             margin: 0;
-            /* Quitamos el margen que le aplicaba a los labels del menú */
             font-size: 1.1rem;
         }
 
-        /* Reiniciamos el input range por defecto */
         .zoom-controls input[type="range"] {
             -webkit-appearance: none;
             appearance: none;
@@ -285,13 +286,8 @@
             padding: 0;
         }
 
-        .zoom-controls input[type="range"]:focus {
-            outline: none;
-            border: none;
-            background: transparent;
-        }
+        .zoom-controls input[type="range"]:focus { outline: none; }
 
-        /* La pista (la línea de fondo) */
         .zoom-controls input[type="range"]::-webkit-slider-runnable-track {
             width: 100%;
             height: 6px;
@@ -300,7 +296,6 @@
             cursor: pointer;
         }
 
-        /* El tirador (el botoncito que arrastras) */
         .zoom-controls input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             height: 16px;
@@ -309,18 +304,14 @@
             background: var(--accent-primary);
             cursor: pointer;
             margin-top: -5px;
-            /* Centra el tirador verticalmente en la pista */
             box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
-            /* Brillo a juego con tu color primario */
             transition: transform 0.2s ease;
         }
 
         .zoom-controls input[type="range"]::-webkit-slider-thumb:hover {
             transform: scale(1.2);
-            /* Crece un poquito al pasar el ratón */
         }
 
-        /* Estilo para el número del porcentaje */
         .zoom-value {
             font-family: 'Space Grotesk', sans-serif;
             font-size: 0.85rem;
@@ -330,17 +321,17 @@
             text-align: right;
         }
 
-        input[type="range"] {
-            width: 100px;
+        /* Controles de Rango de Imagen Laterales (Limpios) */
+        #image-controls input[type="range"] {
+            width: 100%;
+            margin-top: 5px;
         }
-
 
         /* ==================================================
            POSTER BASE STYLES
            ================================================== */
         #cartel {
-            margin: auto;
-            /* Esta es la magia que arregla el scroll */
+            margin: auto; /* Arreglo para el Scroll */
             background: #ffffff;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             position: relative;
@@ -350,15 +341,8 @@
             background-color: #f1f5f9;
         }
 
-        #cartel.is-portrait {
-            width: 794px;
-            height: 1123px;
-        }
-
-        #cartel.is-landscape {
-            width: 1123px;
-            height: 794px;
-        }
+        #cartel.is-portrait { width: 794px; height: 1123px; }
+        #cartel.is-landscape { width: 1123px; height: 794px; }
 
         .cartel-bg {
             position: absolute;
@@ -368,11 +352,16 @@
             z-index: 1;
         }
 
+        /* Clases Globales del Logo */
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+        }
+
         /* ==================================================
-           TEMPLATE 1: HERO (Elegante y fotográfico)
+           TEMPLATE 1: HERO
            ================================================== */
         .template-hero .cartel-bg {
-            /* Degradado oscuro sobre la imagen para asegurar lectura del texto blanco */
             box-shadow: inset 0 -600px 400px -200px rgba(0, 0, 0, 0.85);
         }
 
@@ -393,12 +382,7 @@
             align-items: flex-start;
         }
 
-        .template-hero .logo {
-            font-family: 'Syne', sans-serif;
-            font-size: 3rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-        }
+        .template-hero .logo { font-size: 3rem; letter-spacing: -1px; }
 
         .template-hero .badge {
             background: rgba(255, 255, 255, 0.2);
@@ -412,9 +396,7 @@
             text-transform: uppercase;
         }
 
-        .template-hero .product-info {
-            max-width: 80%;
-        }
+        .template-hero .product-info { max-width: 80%; }
 
         .template-hero .title {
             font-family: 'Syne', sans-serif;
@@ -455,17 +437,10 @@
         }
 
         /* ==================================================
-           TEMPLATE 2: SPLIT (Corporativo y estructurado)
+           TEMPLATE 2: SPLIT
            ================================================== */
-        .template-split {
-            display: flex;
-            flex-direction: row;
-            /* Landscape by default */
-        }
-
-        .template-split.is-portrait {
-            flex-direction: column;
-        }
+        .template-split { display: flex; flex-direction: row; }
+        .template-split.is-portrait { flex-direction: column; }
 
         .template-split .image-pane {
             flex: 1;
@@ -487,15 +462,11 @@
         }
 
         .template-split .logo {
-            font-family: 'Syne', sans-serif;
             font-size: 2.5rem;
-            font-weight: 800;
-            color: #0f172a;
             margin-bottom: auto;
         }
 
         .template-split .collection {
-            color: #6366f1;
             font-family: 'Inter', sans-serif;
             font-weight: 800;
             font-size: 1.2rem;
@@ -508,7 +479,6 @@
             font-family: 'Syne', sans-serif;
             font-size: 4rem;
             font-weight: 700;
-            color: #0f172a;
             line-height: 1.1;
             margin-bottom: 25px;
         }
@@ -516,7 +486,6 @@
         .template-split .desc {
             font-family: 'Inter', sans-serif;
             font-size: 1.3rem;
-            color: #475569;
             line-height: 1.6;
             margin-bottom: 40px;
         }
@@ -530,7 +499,6 @@
         .template-split .price-label {
             font-family: 'Inter', sans-serif;
             font-size: 1rem;
-            color: #94a3b8;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -539,15 +507,13 @@
             font-family: 'Syne', sans-serif;
             font-size: 5rem;
             font-weight: 800;
-            color: #0f172a;
             line-height: 1;
         }
 
         /* ==================================================
-   TEMPLATE 3: PROMO (Impacto e incentivo - ESTILO GLASS)
-   ================================================== */
+           TEMPLATE 3: PROMO
+           ================================================== */
         .template-promo .cartel-bg {
-            /* Capa semitransparente oscura para destacar la caja central */
             background-color: rgba(15, 23, 42, 0.7);
             background-blend-mode: multiply;
         }
@@ -562,76 +528,50 @@
             padding: 40px;
         }
 
-        /* --- LA MAGIA DEL GLASSMORPHISM AQUÍ --- */
         .template-promo .promo-card {
             padding: 60px;
             width: 80%;
             max-width: 800px;
             text-align: center;
-
-            /* Efecto Glass adaptado */
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(15px);
-            /* Subido a 15px para mejor legibilidad en el cartel */
             -webkit-backdrop-filter: blur(15px);
             border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow:
                 0 30px 60px rgba(0, 0, 0, 0.4),
-                /* Tu sombra original para dar profundidad */
                 inset 0 1px 0 rgba(255, 255, 255, 0.5),
                 inset 0 -1px 0 rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
         }
 
-        /* Brillos de los bordes superior e izquierdo */
         .template-promo .promo-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
         }
 
         .template-promo .promo-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 1px;
-            height: 100%;
+            content: ''; position: absolute; top: 0; left: 0; width: 1px; height: 100%;
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), transparent, rgba(255, 255, 255, 0.3));
         }
 
-        /* --- AJUSTE DE COLORES DE TEXTO PARA QUE DESTAQUEN SOBRE EL CRISTAL --- */
         .template-promo .logo {
-            font-family: 'Syne', sans-serif;
             font-size: 2rem;
-            font-weight: 800;
-            color: #ffffff;
-            /* Cambiado a blanco */
             margin-bottom: 20px;
         }
 
         .template-promo .title {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 5rem;
-            color: #ffffff;
-            /* Cambiado a blanco */
             line-height: 1;
             margin-bottom: 10px;
             text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            /* Pequeña sombra para extra legibilidad */
         }
 
         .template-promo .desc {
             font-family: 'Inter', sans-serif;
             font-size: 1.2rem;
-            color: #e2e8f0;
-            /* Gris muy clarito */
             margin-bottom: 30px;
         }
 
@@ -646,8 +586,6 @@
         .template-promo .old-price {
             font-family: 'Inter', sans-serif;
             font-size: 2.5rem;
-            color: #cbd5e1;
-            /* Gris medio-claro */
             text-decoration: line-through;
             font-weight: 600;
         }
@@ -655,17 +593,12 @@
         .template-promo .price {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 9rem;
-            color: #ff4757;
-            /* Rojo un poco más brillante para que vibre sobre el fondo oscuro */
             line-height: 0.8;
             text-shadow: 0 4px 20px rgba(255, 71, 87, 0.3);
-            /* Resplandor rojo sutil */
         }
 
         .template-promo .badge {
             display: inline-block;
-            background: #ff4757;
-            color: white;
             font-family: 'Inter', sans-serif;
             font-weight: 800;
             font-size: 1.2rem;
@@ -674,22 +607,6 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Estilos para selectores de color */
-        input[type="color"] {
-            padding: 2px;
-            height: 40px;
-            cursor: pointer;
-        }
-
-        input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
-        }
-
-        input[type="color"]::-webkit-color-swatch {
-            border: 1px solid var(--glass-border);
-            border-radius: 6px;
         }
     </style>
 </head>
@@ -748,30 +665,32 @@
 
             <div id="image-controls" style="display: none; margin-top: 15px;">
                 <label>Escala de imagen</label>
-                <input type="range" id="img-scale" min="1" max="4" step="0.1" value="1"
-                    oninput="updateImageTransform()">
+                <input type="range" id="img-scale" min="1" max="4" step="0.1" value="1" oninput="updateImageTransform()">
 
                 <div class="input-group">
                     <div>
                         <label>↔️ Horizontal</label>
-                        <input type="range" id="img-pos-x" min="0" max="100" value="50"
-                            oninput="updateImageTransform()">
+                        <input type="range" id="img-pos-x" min="0" max="100" value="50" oninput="updateImageTransform()">
                     </div>
                     <div>
                         <label>↕️ Vertical</label>
-                        <input type="range" id="img-pos-y" min="0" max="100" value="50"
-                            oninput="updateImageTransform()">
+                        <input type="range" id="img-pos-y" min="0" max="100" value="50" oninput="updateImageTransform()">
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="section">
-            <div class="section-title">🎨 Colores</div>
+            <div class="section-title">🏷️ Marca y Logo</div>
+            <div class="file-upload" onclick="document.getElementById('logo-input').click()"
+                style="padding: 10px; margin-bottom: 15px; font-size: 0.8rem;">
+                <input type="file" id="logo-input" accept="image/*" onchange="loadLogo()" style="display: none;">
+                <div id="logo-upload-text">🖼️ Subir imagen de Logo</div>
+            </div>
 
             <div class="input-group">
                 <div>
-                    <label>Marca (Logo)</label>
+                    <label>Texto Marca</label>
                     <input type="color" id="col-brand" value="#ffffff" oninput="render()">
                 </div>
                 <div>
@@ -779,7 +698,10 @@
                     <input type="color" id="col-title" value="#ffffff" oninput="render()">
                 </div>
             </div>
+        </div>
 
+        <div class="section">
+            <div class="section-title">🎨 Colores</div>
             <div class="input-group">
                 <div>
                     <label>Descripción</label>
@@ -836,8 +758,7 @@
     <div class="preview-area">
         <div class="zoom-controls">
             <label>🔍</label>
-            <input type="range" id="zoom-slider" min="0.3" max="1" step="0.05" value="0.7"
-                oninput="updateZoom(this.value)">
+            <input type="range" id="zoom-slider" min="0.3" max="1" step="0.05" value="0.7" oninput="updateZoom(this.value)">
             <div class="zoom-value" id="zoom-value">70%</div>
         </div>
 
@@ -853,8 +774,7 @@
             zoom: 0.7,
             image: null,
             imgScale: 1,
-            imgX: 0,
-            imgY: 0,
+            logoImage: null, // Control del logo subido
             data: {
                 title: 'CHAQUETA MONT BLANC',
                 desc: 'Tejido técnico transpirable con membrana impermeable. Ajuste ergonómico diseñado para la alta montaña.',
@@ -864,22 +784,19 @@
             }
         };
 
-        // 1. Añadimos las paletas por defecto según la plantilla
         const templateColors = {
             hero: { brand: '#ffffff', title: '#ffffff', desc: '#e2e8f0', price: '#ffffff', old: '#cbd5e1', badge: '#ffffff' },
             split: { brand: '#0f172a', title: '#0f172a', desc: '#475569', price: '#0f172a', old: '#94a3b8', badge: '#6366f1' },
             promo: { brand: '#ffffff', title: '#ffffff', desc: '#e2e8f0', price: '#ff4757', old: '#cbd5e1', badge: '#ff4757' }
         };
 
-        // 2. Actualizamos selectTemplate para que cambie los colores al clicar
         function selectTemplate(template) {
             state.template = template;
             document.querySelectorAll('.template-card').forEach(card => card.classList.remove('active'));
             event.currentTarget.classList.add('active');
 
-            // Autocompletar colores ideales de la plantilla
             const colors = templateColors[template];
-            document.getElementById('col-brand').value = colors.brand; // <--- NUEVA LÍNEA
+            document.getElementById('col-brand').value = colors.brand; 
             document.getElementById('col-title').value = colors.title;
             document.getElementById('col-desc').value = colors.desc;
             document.getElementById('col-price').value = colors.price;
@@ -889,9 +806,7 @@
             render();
         }
 
-        // 3. Limpiamos la función de transformación de imagen (solo escala)
         function updateImageTransform() {
-            // 1. Recogemos los valores de los tres controles
             state.imgScale = document.getElementById('img-scale').value;
             const posX = document.getElementById('img-pos-x').value;
             const posY = document.getElementById('img-pos-y').value;
@@ -899,19 +814,12 @@
             const bgElement = document.querySelector('.cartel-bg') || document.querySelector('.image-pane');
 
             if (bgElement) {
-                // 2. Mantenemos el tamaño base y hacemos el zoom
                 bgElement.style.transform = `scale(${state.imgScale})`;
-
-                // 3. LA MAGIA: Desplazamos el punto de origen del zoom.
-                // Esto "desbloquea" el movimiento del eje que no tenía sobrante.
                 bgElement.style.transformOrigin = `${posX}% ${posY}%`;
-
-                // 4. Movemos el "foco" interno de la imagen para el eje que sí tiene sobrante.
                 bgElement.style.backgroundPosition = `${posX}% ${posY}%`;
             }
         }
 
-        // 4. Capturamos los colores en getData()
         function getData() {
             return {
                 title: document.getElementById('inp-title').value || state.data.title,
@@ -920,8 +828,7 @@
                 oldPrice: document.getElementById('inp-old').value || state.data.oldPrice,
                 collection: document.getElementById('inp-collection').value || state.data.collection,
 
-                // Extraemos colores
-                colBrand: document.getElementById('col-brand').value, // <--- NUEVA LÍNEA
+                colBrand: document.getElementById('col-brand').value, 
                 colTitle: document.getElementById('col-title').value,
                 colDesc: document.getElementById('col-desc').value,
                 colPrice: document.getElementById('col-price').value,
@@ -930,62 +837,112 @@
             };
         }
 
-        // 5. Aplicamos los colores en línea a las plantillas
+        // --- SISTEMA DE LOGO ---
+        function loadLogo() {
+            const input = document.getElementById('logo-input');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    state.logoImage = e.target.result;
+                    document.getElementById('logo-upload-text').innerHTML = '✅ Logo cargado (<span onclick="removeLogo(event)" style="color: #ff4757; cursor: pointer; text-decoration: underline;">quitar</span>)';
+                    render();
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removeLogo(e) {
+            e.stopPropagation(); 
+            state.logoImage = null;
+            document.getElementById('logo-input').value = "";
+            document.getElementById('logo-upload-text').textContent = '🖼️ Subir imagen de Logo';
+            render();
+        }
+
+        function getLogoHTML(data) {
+            if (state.logoImage) {
+                return `<img src="${state.logoImage}" style="max-height: 80px; width: auto; object-fit: contain;">`;
+            } else {
+                const brandText = state.template === 'promo' ? 'IZAS OUTDOOR' : 'IZAS';
+                return `<div class="logo" style="color: ${data.colBrand}">${brandText}</div>`;
+            }
+        }
+
+        // --- MOTORES DE RENDERIZADO ---
         function renderHero(data, bgStyle) {
             return `
-        <div class="cartel-bg" style="${bgStyle}"></div>
-        <div class="content">
-            <div class="header">
-                <div class="logo" style="color: ${data.colBrand}">IZAS</div>
-                <div class="badge" style="color: ${data.colBadge}; border-color: ${data.colBadge}">${data.collection}</div>
-            </div>
-            <div class="product-info">
-                <div class="title" style="color: ${data.colTitle}">${data.title}</div>
-                <div class="desc" style="color: ${data.colDesc}">${data.desc}</div>
-                <div class="price-block">
-                    <div class="price" style="color: ${data.colPrice}">${data.price}€</div>
-                    ${data.oldPrice ? `<div class="old-price" style="color: ${data.colOld}">${data.oldPrice}€</div>` : ''}
+                <div class="cartel-bg" style="${bgStyle}"></div>
+                <div class="content">
+                    <div class="header">
+                        ${getLogoHTML(data)}
+                        <div class="badge" style="color: ${data.colBadge}; border-color: ${data.colBadge}">${data.collection}</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="title" style="color: ${data.colTitle}">${data.title}</div>
+                        <div class="desc" style="color: ${data.colDesc}">${data.desc}</div>
+                        <div class="price-block">
+                            <div class="price" style="color: ${data.colPrice}">${data.price}€</div>
+                            ${data.oldPrice ? `<div class="old-price" style="color: ${data.colOld}">${data.oldPrice}€</div>` : ''}
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    `;
+            `;
         }
 
         function renderSplit(data, bgStyle) {
             return `
-        <div class="image-pane" style="${bgStyle}"></div>
-        <div class="text-pane">
-            <div class="logo" style="color: ${data.colBrand}">IZAS</div>
-            <div class="collection" style="color: ${data.colBadge}">${data.collection}</div>
-            <div class="title" style="color: ${data.colTitle}">${data.title}</div>
-            <div class="desc" style="color: ${data.colDesc}">${data.desc}</div>
-            <div class="price-area">
-                <div class="price-label">Precio Especial</div>
-                <div class="price" style="color: ${data.colPrice}">${data.price}€</div>
-            </div>
-        </div>
-    `;
+                <div class="image-pane" style="${bgStyle}"></div>
+                <div class="text-pane">
+                    ${getLogoHTML(data)}
+                    <div class="collection" style="color: ${data.colBadge}">${data.collection}</div>
+                    <div class="title" style="color: ${data.colTitle}">${data.title}</div>
+                    <div class="desc" style="color: ${data.colDesc}">${data.desc}</div>
+                    <div class="price-area">
+                        <div class="price-label">Precio Especial</div>
+                        <div class="price" style="color: ${data.colPrice}">${data.price}€</div>
+                    </div>
+                </div>
+            `;
         }
 
         function renderPromo(data, bgStyle) {
             const savings = data.oldPrice ? (parseFloat(data.oldPrice) - parseFloat(data.price)).toFixed(2) : null;
             return `
-        <div class="cartel-bg" style="${bgStyle}"></div>
-        <div class="content">
-            <div class="promo-card">
-                <div class="logo" style="color: ${data.colBrand}">IZAS</div>
-                <div class="title" style="color: ${data.colTitle}">${data.title}</div>
-                <div class="desc" style="color: ${data.colDesc}">${data.desc}</div>
-                <div class="prices">
-                    ${data.oldPrice ? `<div class="old-price" style="color: ${data.colOld}">${data.oldPrice}€</div>` : ''}
-                    <div class="price" style="color: ${data.colPrice}">${data.price}€</div>
+                <div class="cartel-bg" style="${bgStyle}"></div>
+                <div class="content">
+                    <div class="promo-card">
+                        ${getLogoHTML(data)}
+                        <div class="title" style="color: ${data.colTitle}">${data.title}</div>
+                        <div class="desc" style="color: ${data.colDesc}">${data.desc}</div>
+                        <div class="prices">
+                            ${data.oldPrice ? `<div class="old-price" style="color: ${data.colOld}">${data.oldPrice}€</div>` : ''}
+                            <div class="price" style="color: ${data.colPrice}">${data.price}€</div>
+                        </div>
+                        ${savings
+                            ? `<div class="badge" style="background: ${data.colBadge}; color: white;">Ahorras ${savings}€</div>`
+                            : `<div class="badge" style="background: ${data.colBadge}; color: white;">${data.collection}</div>`}
+                    </div>
                 </div>
-                ${savings
-                    ? `<div class="badge" style="background: ${data.colBadge}">Ahorras ${savings}€</div>`
-                    : `<div class="badge" style="background: ${data.colBadge}">${data.collection}</div>`}
-            </div>
-        </div>
-    `;
+            `;
+        }
+
+        function render() {
+            state.size = document.getElementById('sel-size').value;
+            state.orientation = document.getElementById('sel-orientation').value;
+
+            const poster = document.getElementById('cartel');
+            const data = getData();
+            const bgStyle = state.image ? `background-image: url('${state.image}');` : '';
+
+            poster.className = `template-${state.template} is-${state.orientation === 'l' ? 'landscape' : 'portrait'}`;
+            applyZoom();
+
+            if (state.template === 'hero') poster.innerHTML = renderHero(data, bgStyle);
+            if (state.template === 'split') poster.innerHTML = renderSplit(data, bgStyle);
+            if (state.template === 'promo') poster.innerHTML = renderPromo(data, bgStyle);
+            if (state.image) {
+                updateImageTransform();
+            }
         }
 
         function loadImage() {
@@ -997,10 +954,7 @@
                     document.getElementById('file-upload-area').classList.add('has-image');
                     document.getElementById('upload-text').textContent = '✓ Imagen aplicada';
 
-                    // Mostrar los controles de ajuste
                     document.getElementById('image-controls').style.display = 'block';
-
-                    // Reiniciar valores al subir nueva imagen
                     document.getElementById('img-scale').value = 1;
                     document.getElementById('img-pos-x').value = 50;
                     document.getElementById('img-pos-y').value = 50;
@@ -1022,33 +976,11 @@
             document.getElementById('cartel').style.transform = `scale(${state.zoom})`;
         }
 
-
-        // --- Motores de Renderizado ---
-        function render() {
-            state.size = document.getElementById('sel-size').value;
-            state.orientation = document.getElementById('sel-orientation').value;
-
-            const poster = document.getElementById('cartel');
-            const data = getData();
-            const bgStyle = state.image ? `background-image: url('${state.image}');` : '';
-
-            poster.className = `template-${state.template} is-${state.orientation === 'l' ? 'landscape' : 'portrait'}`;
-            applyZoom();
-
-            if (state.template === 'hero') poster.innerHTML = renderHero(data, bgStyle);
-            if (state.template === 'split') poster.innerHTML = renderSplit(data, bgStyle);
-            if (state.template === 'promo') poster.innerHTML = renderPromo(data, bgStyle);
-            if (state.image) {
-                updateImageTransform();
-            }
-        }
-
         function downloadPDF() {
             const btnText = document.getElementById('btn-text');
             const originalText = btnText.textContent;
             btnText.textContent = '⏳ Cargando fuentes...';
 
-            // Asegurarnos de que las fuentes están 100% cargadas antes de capturar
             document.fonts.ready.then(() => {
                 btnText.textContent = '⏳ Generando PDF...';
                 const poster = document.getElementById('cartel');
@@ -1068,23 +1000,23 @@
                         margin: 0
                     }
                 })
-                    .then(function (dataUrl) {
-                        const { jsPDF } = window.jspdf;
-                        const pdf = new jsPDF(state.orientation, 'mm', state.size);
+                .then(function (dataUrl) {
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF(state.orientation, 'mm', state.size);
 
-                        const pdfWidth = pdf.internal.pageSize.getWidth();
-                        const pdfHeight = pdf.internal.pageSize.getHeight();
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
 
-                        pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                        pdf.save(`IzasPrint_${state.template}.pdf`);
+                    pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save(`IzasPrint_${state.template}.pdf`);
 
-                        btnText.textContent = originalText;
-                    })
-                    .catch(function (error) {
-                        console.error('Error generando el PDF:', error);
-                        btnText.textContent = '❌ Error al exportar';
-                        setTimeout(() => btnText.textContent = originalText, 3000);
-                    });
+                    btnText.textContent = originalText;
+                })
+                .catch(function (error) {
+                    console.error('Error generando el PDF:', error);
+                    btnText.textContent = '❌ Error al exportar';
+                    setTimeout(() => btnText.textContent = originalText, 3000);
+                });
             });
         }
 
