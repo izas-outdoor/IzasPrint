@@ -687,14 +687,24 @@
         </div>
 
         <div class="section">
-            <div class="section-title">🏷️ Marca y Logo</div>
-            <div class="file-upload" onclick="document.getElementById('logo-input').click()"
-                style="padding: 10px; margin-bottom: 15px; font-size: 0.8rem;">
-                <input type="file" id="logo-input" accept="image/*" onchange="loadLogo()" style="display: none;">
-                <div id="logo-upload-text">🖼️ Subir imagen de Logo</div>
+            <div class="section-title">🏷️ Selección de Logo</div>
+            
+            <div class="template-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 15px;">
+                <div class="template-card" id="logo-opt-1" onclick="selectPresetLogo('logo-blanco.png', 'logo-opt-1')">
+                    <div class="template-icon">⚪</div>
+                    <div class="template-name">Blanco</div>
+                </div>
+                <div class="template-card" id="logo-opt-2" onclick="selectPresetLogo('logo-color.png', 'logo-opt-2')">
+                    <div class="template-icon">🎨</div>
+                    <div class="template-name">Color</div>
+                </div>
             </div>
-
-            <div class="input-group">
+        
+            <button onclick="removeLogo(event)" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted); padding: 8px; border-radius: 6px; cursor: pointer; font-size: 0.7rem; text-transform: uppercase;">
+                Restablecer a Texto
+            </button>
+        
+            <div class="input-group" style="margin-top: 15px;">
                 <div>
                     <label>Texto Marca</label>
                     <input type="color" id="col-brand" value="#ffffff" oninput="render()">
@@ -843,25 +853,23 @@
             };
         }
 
-        // --- SISTEMA DE LOGO ---
-        function loadLogo() {
-            const input = document.getElementById('logo-input');
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    state.logoImage = e.target.result;
-                    document.getElementById('logo-upload-text').innerHTML = '✅ Logo cargado (<span onclick="removeLogo(event)" style="color: #ff4757; cursor: pointer; text-decoration: underline;">quitar</span>)';
-                    render();
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
+        function selectPresetLogo(logoPath, elementId) {
+            // 1. Guardamos la ruta en el estado
+            state.logoImage = logoPath;
+            
+            // 2. Feedback visual de selección
+            document.querySelectorAll('[id^="logo-opt-"]').forEach(opt => opt.classList.remove('active'));
+            document.getElementById(elementId).classList.add('active');
+            
+            // 3. Renderizamos
+            render();
         }
-
+        
+        // Modificamos ligeramente la de borrar para limpiar la selección visual
         function removeLogo(e) {
-            e.stopPropagation(); 
+            if(e) e.stopPropagation();
             state.logoImage = null;
-            document.getElementById('logo-input').value = "";
-            document.getElementById('logo-upload-text').textContent = '🖼️ Subir imagen de Logo';
+            document.querySelectorAll('[id^="logo-opt-"]').forEach(opt => opt.classList.remove('active'));
             render();
         }
 
